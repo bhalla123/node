@@ -47,16 +47,11 @@ router.route('/logout')
 	.post(passportJWT, ApiController.logout);
 
 // add vault
-/*router.route('/add-vault')
-.post(passportJWT, /* validateBody(schemas.addVaultSchema), vaultUploads.array('vaultFiles', 12), ApiController.addVault);*/
+router.route('/create/booking')
+.post(passportJWT, vaultUploads.array('vaultFiles', 12), ApiController.createBooking);
 
 // vault listing
 router.route('/vault-listing')
 .get(passportJWT, ApiController.vaultListing);
-
-// get user profile
-router.route('/user-profile')
-.get(passportJWT, validateQuery(schemas.userIdSchema), ApiController.userProfile);
-
 
 module.exports = router; 

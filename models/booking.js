@@ -24,6 +24,12 @@ module.exports = function (sequelize, DataTypes) {
 			allowNull: true,
 			field: 'filler_type'
 		},
+		status: {
+			type:DataTypes.STRING(255),
+			allowNull:false,
+			defaultValue: 'Requested',
+			field:'status'
+		}
 	},
 	{
 		tableName: 'bookings'

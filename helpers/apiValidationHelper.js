@@ -52,8 +52,7 @@ module.exports = {
 
 		signInSchema: joi.object().keys({
 			password: joi.string().required(),
-			deviceType: joi.number().empty(''),
-			deviceToken: joi.string().empty(''),
+			email: joi.string().required(),
 		}),
 
 		updateProfileSchema: joi.object().keys({
@@ -72,8 +71,7 @@ module.exports = {
 			email: joi.string().required(),
 			password: joi.string().required(),
 			phone_number: joi.string().empty(''),
-			deviceType: joi.number().empty(''),
-			deviceToken: joi.string().empty(''),
+			role_name: joi.string().empty(''),
 		}),
 
 		forgotPasswordSchema: joi.object().keys({

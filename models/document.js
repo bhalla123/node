@@ -1,7 +1,7 @@
 /* jshint indent: 1 */
 const fileURL = require('../config/main');
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define('vaultFiles', {
+  return sequelize.define('documents', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -9,15 +9,15 @@ module.exports = function (sequelize, DataTypes) {
       autoIncrement: true,
       field: 'id'
     },
-    userId: {
+    type_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
-      field: 'userId'
+      field: 'type_id'
     },
-    vaultId: {
+    type: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
-      field: 'vaultId'
+      field: 'type'
     },
     file: {
       type: DataTypes.STRING(255),
@@ -33,6 +33,6 @@ module.exports = function (sequelize, DataTypes) {
     },
     },
     {
-      tableName: 'vaultFiles'
+      tableName: 'documents'
     });
 };

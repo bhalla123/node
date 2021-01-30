@@ -11,8 +11,9 @@ const constant = require('../config/main');
 const BaseThumbNailUrl = require('../config/main').thumbnailUrl
 
 const User = db.users;
-const Vault = db.vaults;
-const VaultFile = db.vaultFiles;
+const Role = db.roles;
+const Booking = db.bookings;
+const Document = db.documents;
 
 signtoken = user => {
   return JWT.sign({
@@ -20,10 +21,12 @@ signtoken = user => {
   }, JWT_SECRET);
 }
 
-// start associations //
-Vault.belongsTo(User, { foreignKey: 'userId' })
-Vault.hasMany(VaultFile, { foreignKey: 'vaultId' })
-// end associations //
+//start associations //
+Booking.belongsTo(User, { foreignKey: 'user_id' })
+Booking.hasMany(Document, { foreignKey: 'type_id' })
+Role.hasMany(Role, { foreignKey: 'user_id' })
+//end associations //
+
 module.exports = {
 
   // user signup
@@ -59,6 +62,17 @@ module.exports = {
             id: createUser.dataValues.id
           },
         })
+
+        //Create user role
+        {
+          let roleObj = {
+            user_id: getUser.id,
+            name: data.role_name,
+          }
+
+          const createRole = await Role.create(roleObj);
+        }
+
         const access_token = signtoken(getUser)
         delete getUser.dataValues.password;
         getUser.dataValues.access_token = access_token;
@@ -78,37 +92,29 @@ module.exports = {
       const data = req.body;
       // Match email
       const user = await User.findOne({
-        attributes: ['id', 'userName', 'email', 'password', 'userType'],
+        attributes: ['id', 'email', 'password'],
         where: {
-          userName: data.userName
+          email: data.email
         }
       });
+
+      console.log(user);
       if (user) {
         // Match password
         const isMatch = await helperFxn.comparePass(data.password, user.dataValues.password);
         if (!isMatch) {
           return responseHelper.Error(res, {}, 'Invalid login details')
         }
-        // update deviceToken
-        const saveDeviceToken = await User.update(
-          {
-            deviceType: data.deviceType,
-            deviceToken: data.deviceToken,
-          }, {
-          where: {
-            id: user.dataValues.id
-          }
-
-        })
+        
         const getUser = await User.findOne({
           where: {
             id: user.dataValues.id
           },
         })
-        const accessToken = signtoken(getUser)
+
+        const access_token = signtoken(getUser)
         delete getUser.dataValues.password;
-        delete getUser.dataValues.forgotPassword;
-        getUser.dataValues.accessToken = accessToken;
+        getUser.dataValues.access_token = access_token;
         return responseHelper.post(res, getUser, 'User Successfully logged in');
       } else {
         return responseHelper.Error(res, {}, 'Invalid login details')
@@ -226,104 +232,15 @@ module.exports = {
     }
   },
   
-  // social login
-  socialLogin: async (req, res) => {
+  //booking
+  createBooking: async (req, res) => {
     try {
-      const data = req.body;
-      // check if socialId esists or not
-      const user = await User.findOne({
-        attributes: ['id', 'email', 'userName'],
-        where: {
-          socialId: data.socialId
-        }
-      });
-
-      if (user) {
-        // update deviceType and deviceToken
-        await User.update({ deviceType: data.deviceType, deviceToken: data.deviceToken }, {
-          where: {
-            id: user.dataValues.id
-          }
-        });
-        const getUser = await User.findOne({
-          where: {
-            id: user.dataValues.id
-          },
-        })
-        const accessToken = signtoken(getUser)
-        delete getUser.dataValues.password;
-        delete getUser.dataValues.forgotPassword;
-        getUser.dataValues.accessToken = accessToken;
-        return responseHelper.post(res, getUser, 'Successfully logged in')
-      }
-
-      // if user doesn't exist in records then save user first
-       // check userName
-       const checkUserName = await User.findOne({
-        attributes: ['id', 'userName'],
-        where: {
-          userName: data.userName
-        }
-      })
-      if (checkUserName) {
-        return responseHelper.Error(res, {}, 'Username already esists')
-      }
-       // check email
-       const checkEmail = await User.findOne({
-        attributes: ['id', 'socialId', 'email', 'userName'],
-        where: {
-          email: data.email,
-          //socialId: '',
-        }
-      });
-      if (checkEmail) {
-        return responseHelper.Error(res, {}, 'Email already exists')
-      }
-     // save user
-      const saveUser = await User.create({
-        userName: data.userName,
-        email: data.email,
-        socialType: data.socialType,
-        socialId: data.socialId,
-      });
-      if (saveUser) {
-        const accessToken = signtoken(saveUser)
-        delete saveUser.dataValues.password;
-        delete saveUser.dataValues.forgotPassword;
-        saveUser.dataValues.accessToken = accessToken;
-        return responseHelper.post(res, saveUser, 'Successfully logged in')
-      } else {
-        return responseHelper.Error(res, {}, 'Error in social login')
-      }
-    } catch (err) {
-      return responseHelper.onError(res, err, 'Error while social log in');
-    }
-  },
-
-  // add vault
-  addVault: async (req, res) => {
-    try {
-      const checkUser = req.user
       const data = req.body;
       const files = req.files
-      //console.log('reqdata -', data);
-      //console.log('reqfiles -', req.files);
+      //const authUser = j
+      
       //return;
       if (checkUser) {
-        // trigger time
-        let triggerTime = data.triggerTime;   // your input string
-        let s = triggerTime.split(':'); // split it at the colons
-        // minutes are worth 60 seconds. Hours are worth 60 minutes.
-        //let newTriggerTime = (+s[0]) * 60 * 60 + (+s[1]) * 60 + (+s[2]); 
-        let newTriggerTime = (+s[0]) * 60 * 60 + (+s[1]) * 60 + 0;
-        console.log('triggerTime====>', newTriggerTime);
-
-        // TRIGGER date 
-        let sd = data.triggerDate.split('/');
-        let nsd = `${sd[1]}/${sd[0]}/${sd[2]}`;
-        let triggerDate = new Date(nsd).getTime() / 1000 // mm/dd/yyyy  dd/mm/yyyy
-        let newTriggerDate = (newTriggerTime) + (triggerDate);
-        console.log('newTriggerDate====>', newTriggerDate);
 
         let newObj = {
           userId: checkUser.dataValues.id,
@@ -392,7 +309,7 @@ module.exports = {
     }
   },
 
-   // user profile
+  // user profile
   userProfile: async (req, res) => {
     try {
       const checkUser = req.user;
@@ -417,45 +334,6 @@ module.exports = {
     } catch (err) {
       return responseHelper.onError(res, err, 'Error while getting user profile');
     }
-  },
-
-  //update user profile
-  updateProfile: async(req, res) => {
-      try{
-        const data = req.body;
-        const checkUser = req.user;
-        
-        if(checkUser){
-            //Data for updating records
-            var newData = {
-              firstName: data.firstName || '',
-              lastName: data.lastName || '',
-              email: data.email,
-              phone: data.phone || '',
-              gender: data.gender || '',
-              about: data.about || '',
-              dob: data.dob || '',
-            }
-
-            var updatedUser = await User.update(newData, {
-              where: {
-                id: checkUser.dataValues.id
-              }
-            });
-
-            const getUser = await User.findOne({
-              where: {
-                id: checkUser.dataValues.id
-              },
-            })
-
-          return responseHelper.get(res, getUser, 'User profile')
-        }else {
-          return responseHelper.Error(res, {}, 'Please login first for updating profile')  
-        }
-      }catch (err){
-        return responseHelper.onError(res, err, 'Error while updating user profile');
-      }
   },
 
   //update profile image

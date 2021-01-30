@@ -6,7 +6,10 @@ const passportJWT = passport.authenticate('jwt', { session: false });
 const ApiController = require('../controllers/apiController');
 const { validateBody, validateQuery, validateFile, schemas } = require('../helpers/apiValidationHelper');
 const multer = require('multer');
-var path = require('path')
+var path = require('path');
+
+var middleware = require("../middlewares");
+
 
 var vaultFileStorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -24,43 +27,28 @@ var vaultUploads = multer({storage : vaultFileStorage })// file data uploading p
 
 // signIn
 router.route('/login')
-	.post(validateBody(schemas.signInSchema), ApiController.login);
+	.post(validateBody(schemas.signInSchema) , ApiController.login);
 
 // user signup
 router.route('/signup')
 	.post(validateBody(schemas.createUserSchema), ApiController.signup);
 
 //update profile
-router.route('/update/profile')
-	.post(passportJWT, validateBody(schemas.updateProfileSchema), ApiController.updateProfile);
+/*router.route('/update/profile')
+	.post(passportJWT, validateBody(schemas.updateProfileSchema), ApiController.updateProfile);*/
 
 //update profile image
 router.route('/update/profile/image')
 .post(passportJWT, ImageUpload.array('images', 12), ApiController.userProfileImage);
 
-// forgot Password	
-router.route('/forgot-password')
-	.post(validateBody(schemas.forgotPasswordSchema), ApiController.forgotPassword);
-
-// cLickOnUrl
-router.route('/reset-password/:id')
-	.get(ApiController.apiUrl);
-
-// change Password
-router.route('/change-password')
-	.post(ApiController.changePassword);
 
 // logout
 router.route('/logout')
 	.post(passportJWT, ApiController.logout);
 
-// social login
-router.route('/social-login')
-.post(validateBody(schemas.socialLoginSchema), ApiController.socialLogin);
-
 // add vault
-router.route('/add-vault')
-.post(passportJWT, /* validateBody(schemas.addVaultSchema), */ vaultUploads.array('vaultFiles', 12), ApiController.addVault);
+/*router.route('/add-vault')
+.post(passportJWT, /* validateBody(schemas.addVaultSchema), vaultUploads.array('vaultFiles', 12), ApiController.addVault);*/
 
 // vault listing
 router.route('/vault-listing')

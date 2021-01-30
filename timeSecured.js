@@ -7,6 +7,12 @@ const session = require('express-session');
 const cookiesParser = require('cookie-parser');
 var fileupload = require("express-fileupload");
 const passport = require('passport');
+const sequelize = require('sequelize');
+const db = require('./models');
+const dotenv = require('dotenv');
+require('express-group-routes');
+const path = require('path');
+
 
 const port = process.env.PORT || 3003
 const app = express();
@@ -23,8 +29,11 @@ passport.deserializeUser(function (user, done) {
   done(null, user);
 });
 
+db.sequelize.sync({ force: false })
+
+
 // EJS
-app.use(expressLayouts);
+app.set('views', path.join(__dirname,'views'));
 app.set('view engine', 'ejs');
 
 // Express body parser
@@ -35,7 +44,7 @@ app.use(bodyParser.json({type: 'application/*'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Express session (milliseconds)
-app.use(  session({ secret: 'timeSecuredSecret', cookie: { maxAge: 3600000 }, resave: true, saveUninitialized: true}) );
+app.use(session({ secret: 'timeSecuredSecret', cookie: { maxAge: 3600000 }, resave: true, saveUninitialized: true}) );
 
 app.use(cookiesParser());
 
@@ -50,6 +59,7 @@ app.use(function(req, res, next) {
   next();
 });
 
+
 app.use(express.static(__dirname + '/public'));  
 
 app.use((req, res, next) => {
@@ -60,9 +70,20 @@ app.use((req, res, next) => {
 	next();
 });
 
+var login = require('./controllers/login');
+var signup = require('./controllers/signup');
+
+
+
+
+//routes
+app.use('/login', login);
+app.use('/signup', signup);
+
 
 /* Start Api Routes */
 app.use('/api', require('./routes/apiRoutes'));
+
 /* ends */
 
 app.use(fileupload());
@@ -72,3 +93,4 @@ router(app);
 app.listen(port,()=> { 
 	console.log(`Server is listening at ${port} port`);
 });
+

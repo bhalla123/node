@@ -94,6 +94,10 @@ module.exports = {
               {
                 model: FuelPump,
               },
+              {
+                model: User,
+                where:{"status":"active"}
+              }
             ],
             order : [
               [ 'id', 'DESC']

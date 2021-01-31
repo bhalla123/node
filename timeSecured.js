@@ -44,27 +44,9 @@ app.set('views', path.join(__dirname,'views'));
 app.set('view engine', 'ejs');
 
 //app.use(bodyParser.json({ type: 'application/*+json' }));
+//app.use(express.static(__dirname + '/public'));  
 
-// Express session (milliseconds)
-app.use(session({ secret: 'timeSecuredSecret', cookie: { maxAge: 3600000 }, resave: true, saveUninitialized: true}) );
-
-app.use(cookiesParser());
-
-// Connect flash
-app.use(flash());
-
-// Global variables
-/*app.use(function(req, res, next) {
-  res.locals.success_msg = req.flash('success_msg');
-  res.locals.error_msg = req.flash('error_msg');
-  res.locals.error = req.flash('error');
-  next();
-});
-*/
-
-app.use(express.static(__dirname + '/public'));  
-
-/*app.use((req, res, next) => {
+app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', "*");
 	res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials');
@@ -72,18 +54,10 @@ app.use(express.static(__dirname + '/public'));
 	next();
 });
 
-var login = require('./controllers/login');
-var signup = require('./controllers/signup');
 
-//routes
-app.use('/login', login);
-app.use('/signup', signup);*/
-
-
-/*app.group((router) => {
+app.group((router) => {
   router.use(middleware.apiKeyCheck);
 });
-*/
 
 /* Start Api Routes */
 app.use('/api', require('./routes/apiRoutes'));
@@ -92,7 +66,6 @@ app.use('/api', require('./routes/apiRoutes'));
 /* ends */
 
 router(app);
-
 
 app.listen(port,()=> { 
 	console.log(`Server is listening at ${port} port`);

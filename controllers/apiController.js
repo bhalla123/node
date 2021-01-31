@@ -15,7 +15,6 @@ const Booking = db.bookings;
 const Document = db.documents;
 
 signtoken = user => {
-  //console.log("mkmk", user);
   return JWT.sign({
     id: user.dataValues.id,
     role_name: user.dataValues.type
@@ -31,11 +30,9 @@ module.exports = {
   // user signup
   signup: async (req, res) => {
     try {
-      var filename = [];
       const data = req.body;
-      const files = req.files;
 
-      // check Email 
+      //check Email 
       const checkEmail = await User.findOne({
         attributes: ['id', 'email'],
         where: {
@@ -46,10 +43,6 @@ module.exports = {
       if (checkEmail) {
         return responseHelper.Error(res, {}, 'Email is already used, Please select another')
       }
-
-      await files.map( async c => {
-          filename.push(c.filename);
-      });
      
       let newPassword = await helperFxn.generatePass(data.password);
 
@@ -60,7 +53,6 @@ module.exports = {
         password: newPassword,
         phone_number: data.phone_number,
         type:data.type,
-        image:filename[0]
       }
 
       const createUser = await User.create(newObj);

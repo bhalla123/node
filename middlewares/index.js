@@ -6,8 +6,17 @@ const { JWT_SECRET } = require('../config/main');
 const middleware = {};
 
 middleware.apiKeyCheck = function(req, res, next) {
-	//console.log("njj", process.env.API_KEY);
-    return next();
+	var p_api_key = process.env.API_KEY;
+
+    if(p_api_key == req.headers.apikey){
+        return next();
+    }else{
+        res.status(412)
+            .send({
+                success: false,
+                message: "Invalid Key",
+            });
+    }
 };
 
 middleware.isAdmin = function(req, res, next) {

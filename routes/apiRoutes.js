@@ -29,7 +29,7 @@ router.route('/login')
 
 // user signup
 router.route('/signup')
-	.post(vaultUploads.array('images',1), ApiController.signup);
+	.post(validateBody(schemas.createUserSchema), ApiController.signup);
 
 //update profile
 /*router.route('/update/profile')
@@ -54,7 +54,7 @@ router.route('/create/booking')
 .post(passportJWT, ApiController.createBooking);
 
 // Booking listing
-router.route('//vault-listing')
+router.route('/vault-listing')
 .get( ApiController.vaultListing);
 
 module.exports = router; 

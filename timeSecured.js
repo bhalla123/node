@@ -48,9 +48,9 @@ app.use((req, res, next) => {
 });
 
 
-/*app.group('/api/v1',(router) => {
-  router.use( middleware.isActive);
-});*/
+app.group('/api/v1',(router) => {
+  router.use( middleware.isActive, middleware.apiKeyCheck);
+});
 
 /* Start Api Routes */
 app.use('/api', require('./routes/apiRoutes'));

@@ -44,7 +44,7 @@ router.route('/update/profile')
 
 //update status for admin only
 router.route('/update/status')
-.post(passportJWT,  validateBody(schemas.updateStatusSchema), userController.updateStatus);
+.post(passportJWT, middleware.isAdmin, validateBody(schemas.updateStatusSchema), userController.updateStatus);
 
 // logout
 router.route('/logout')

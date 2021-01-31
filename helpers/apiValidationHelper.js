@@ -72,12 +72,12 @@ module.exports = {
 			password: joi.string().required(),
 			phone_number: joi.string().empty(''),
 			role_name: joi.string().empty(''),
-			type: joi.string().valid('Admin', 'NormalUser', 'Employee').required(),
+			type: joi.string().valid('admin', 'user', 'employee').required(),
 		}),
 
 		updateStatusSchema: joi.object().keys({
 			user_id: joi.string().required(),
-			status: joi.string().valid('Block', 'Deleted', 'Active').required(),
+			status: joi.string().valid('block', 'deleted', 'active').required(),
 		}),
 
 		addVaultSchema: joi.object().keys({

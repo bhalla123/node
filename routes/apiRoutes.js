@@ -55,7 +55,11 @@ router.route('/v1/create/booking')
 .post(passportJWT, validateBody(schemas.createBookingSchema), bookingController.createBooking);
 
 // Booking listing
-/*router.route('/vault-listing')
-.get(middleware.isActive, BookingController.vaultListing);*/
+router.route('/v1/booking/list')
+.get(passportJWT, bookingController.bookingList);
+
+//update fuel 
+router.route('/v1/update/station/image')
+.get(passportJWT, bookingController.updateFuelStation);
 
 module.exports = router; 

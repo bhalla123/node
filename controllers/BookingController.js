@@ -12,6 +12,8 @@ const constant = require('../config/main');
 const User = db.users;
 const Booking = db.bookings;
 const BookingSlot = db.booking_slots;
+const FuelPump = db.fuel_pumps;
+const Fuel = db.fuels;
   
 module.exports = {
   
@@ -21,15 +23,12 @@ module.exports = {
 
       const data = req.body;
 
-      var authToken = req.headers.authorization;
-
-      //get login user
-      var decoded = JWT.verify(authToken.split(' ')[1], JWT_SECRET);
+      var userId = req.user.id;
       
       // get user
       const user = await User.findOne({
           where : {
-            id : decoded.id
+            id : userId
           }
       });
 
@@ -45,14 +44,13 @@ module.exports = {
 
         if (bookingObj) {
 
+          var newSlotObj = [];
+
           var slotObj = data.booking_slot;
-          slotObj.map()
 
-          var obj={};
-          obj['booking_id']=3;
-          slotObj.push(obj);
-
-          console.log(slotObj);
+          slotObj.forEach(function(item) {
+            item['booking_id'] = bookingObj.id;
+          });
 
           await BookingSlot.bulkCreate(slotObj);
 
@@ -68,25 +66,48 @@ module.exports = {
     }
   },
 
-  //get pump list
-  pumpListing: async (req, res) => {
+  //get booking list
+  bookingList: async (req, res) => {
     try {
-      const checkUser = req.user
-      if (checkUser) {
-        // get pump listing
-        const getlisting = await FuelPump.findAll({
+
+      var userId = req.user.id;
+      
+      // get user
+      const user = await User.findOne({
           where : {
-           },
-          include : [
-            {
-              model: Fuel,
-            },
-          ],
-          order : [
-            [ 'id', 'DESC']
-          ]
+            id : userId
+          }
+      });
+
+      if (user) {
+
+        //get fuel station id
+        var fuelStationId = await FuelPump.findOne({
+            where : {
+              user_id : userId
+            }
         });
+
+        if(fuelStationId){
+          // get pump listing
+          const getlisting = await Booking.findAll({
+            where : {
+              fuel_pump_id: fuelStationId.id
+            },
+            include : [
+              {
+                model: FuelPump,
+              },
+            ],
+            order : [
+              [ 'id', 'DESC']
+            ]
+          });
           return responseHelper.get(res, getlisting, 'Fuel Pump listing')
+        }else{
+          return responseHelper.onError(res, 'error', 'No Fuel station associated with this user');
+        }
+
       } else {
         return responseHelper.unauthorized(res);
       }
@@ -96,11 +117,12 @@ module.exports = {
   },
 
   //update pump image
-  PumpImage: async(req, res) => {
+  updateFuelStation: async(req, res) => {
     const files = req.files;
     const checkUser = req.user
 
     try{
+      
       if(checkUser){
         files.map( async c => {
             await FuelPump.update({
@@ -113,10 +135,10 @@ module.exports = {
         });
 
         const getPump = await FuelPump.findOne({
-              where: {
-                id: checkUser.dataValues.id
-              },
-            })
+            where: {
+              id: checkUser.dataValues.id
+            },
+          })
         return responseHelper.get(res, getPump, 'Pump image updated')
       }
     }catch(err){

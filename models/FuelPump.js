@@ -1,6 +1,6 @@
 const fileURL = require('../config/main');
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define('fuel_pump', {
+  return sequelize.define('fuel_pumps', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -13,7 +13,11 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       field: 'name'
     },
-	location: {
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+	  location: {
       type: DataTypes.TEXT,
       allowNull: false,
       field: 'location'
@@ -28,7 +32,7 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       field: 'city'
     },
-	state: {
+	  state: {
       type: DataTypes.STRING(250),
       allowNull: false,
       field: 'state'
@@ -70,11 +74,12 @@ module.exports = function (sequelize, DataTypes) {
     }, 
   },
     {
-    tableName: 'fuel_pump'
+    tableName: 'fuel_pumps'
   });
   
   FuelPump.associate = models => {
-        FuelPump.hasMany(models.fuel);
-      };
-    return FuelPump;
+    FuelPump.hasMany(models.fuels);
+  };
+  
+  return FuelPump;
 };

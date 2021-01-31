@@ -1,5 +1,5 @@
  module.exports = function (sequelize, DataTypes) {
-  const Fuel= sequelize.define('fuel', {
+  const Fuel= sequelize.define('fuels', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -24,14 +24,16 @@
       allowNull: false,
      },
   }, 
-    {
-            underscored: true,
-            freezeTableName: true,
-        });
+  
+  {
+      underscored: true,
+      freezeTableName: true,
+  });
   
   Fuel.associate = models => {
-        Fuel.belongsTo(models.fuel_pump);
-      };
-	    return Fuel;
+    Fuel.belongsTo(models.fuel_pumps);
+  };
+  
+  return Fuel;
 
 };

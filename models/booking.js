@@ -32,7 +32,7 @@ module.exports = function (sequelize, DataTypes) {
 	Booking.associate = models => {
         Booking.hasMany(models.booking_slots);
 		Booking.belongsTo(models.users);
-        Booking.belongsTo(models.fuel_pump);
+        Booking.belongsTo(models.fuel_pumps);
       };
     return Booking;
 };

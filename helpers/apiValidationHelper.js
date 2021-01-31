@@ -72,11 +72,11 @@ module.exports = {
 			password: joi.string().required(),
 			phone_number: joi.string().empty(''),
 			role_name: joi.string().empty(''),
-			type: joi.string().valid('admin', 'user', 'employee').required(),
+			type: joi.string().valid('admin', 'user', 'employee', 'owner').required(),
 		}),
 
 		updateStatusSchema: joi.object().keys({
-			user_id: joi.string().required(),
+			user_id: joi.number().required(),
 			status: joi.string().valid('block', 'deleted', 'active').required(),
 		}),
 

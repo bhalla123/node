@@ -23,38 +23,32 @@ var vaultUploads = multer({storage : vaultFileStorage, limits: { fileSize: (1024
 
 //**********  API CONTROLLER ROUTES **********//
 
-// signIn
+//signIn
 router.route('/login')
-	.post(validateBody(schemas.signInSchema) , ApiController.login);
+	.post(validateBody(schemas.signInSchema), ApiController.login);
 
-// user signup
+//user signup
 router.route('/signup')
 	.post(validateBody(schemas.createUserSchema), ApiController.signup);
 
-//update profile
-/*router.route('/update/profile')
-	.post(passportJWT, validateBody(schemas.updateProfileSchema), ApiController.updateProfile);*/
-
 //update profile image
-router.route('/update/profile/image')
-.post(passportJWT, vaultUploads.array('images', 12), ApiController.userProfileImage);
-
+router.route('/upload/file')
+.post(vaultUploads.array('attachment', 1), middleware.isActive, ApiController.userProfileImage);
 
 //update status
 router.route('/update/status')
-.post(vaultUploads.array('images',1), passportJWT, middleware.isAdmin, validateBody(schemas.updateStatusSchema), ApiController.updateStatus);
-
+.post(passportJWT, middleware.isAdmin, validateBody(schemas.updateStatusSchema), ApiController.updateStatus);
 
 // logout
 router.route('/logout')
-	.post(passportJWT, ApiController.logout);
+	.post(passportJWT, middleware.isActive, ApiController.logout);
 
 // add booking
 router.route('/create/booking')
-.post(passportJWT, ApiController.createBooking);
+.post(passportJWT, middleware.isActive, ApiController.createBooking);
 
 // Booking listing
 router.route('/vault-listing')
-.get( ApiController.vaultListing);
+.get(middleware.isActive, ApiController.vaultListing);
 
 module.exports = router; 

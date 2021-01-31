@@ -32,7 +32,6 @@ middleware.isAdmin = function(req, res, next) {
             .send({
                 success: false,
                 message: "You don't have permission to perform his action",
-                data: ""
             });
     }
 
@@ -59,21 +58,19 @@ middleware.isEmployee = function(req, res, next) {
 };
 
 
-middleware.isUser = function(req, res, next) {
+middleware.isActive = function(req, res, next) {
 	var authToken = req.headers.authorization;
 
     //get login user
     var decoded = JWT.verify(authToken.split(' ')[1], JWT_SECRET);
 
- 
-    if(decoded.role_name && decoded.role_name == "user"){
+    if(decoded.status == "active"){
      	return next();
     }else{
     	res.status(412)
             .send({
                 success: false,
-                message: "You don't have permission to perform his action",
-                data: ""
+                message: "You are account is suspended please talk to our customer support for further detail"
             });
     }
 

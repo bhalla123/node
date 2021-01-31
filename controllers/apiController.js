@@ -17,7 +17,8 @@ const Document = db.documents;
 signtoken = user => {
   return JWT.sign({
     id: user.dataValues.id,
-    role_name: user.dataValues.type
+    role_name: user.dataValues.type,
+    status: user.dataValues.status
   }, JWT_SECRET);
 }
 
@@ -34,7 +35,7 @@ module.exports = {
 
       //check Email 
       const checkEmail = await User.findOne({
-        attributes: ['id', 'email'],
+        attributes: ['id', 'email', 'status'],
         where: {
           email: data.email
         }
@@ -81,16 +82,16 @@ module.exports = {
       const data = req.body;
       // Match email
       const user = await User.findOne({
-        attributes: ['id', 'email', 'password'],
+        attributes: ['id', 'email', 'password', 'status'],
         where: {
           email: data.email
-        },
-        include:[
-
-        ]
+        }
       });
 
-      console.log(user);
+      if(user.status == "block" || user.status == "deleted"){
+        return responseHelper.Error(res, {}, 'You are account is suspended please talk to our customer support for further detail')
+      }
+
       if (user) {
         // Match password
         const isMatch = await helperFxn.comparePass(data.password, user.dataValues.password);
@@ -213,7 +214,6 @@ module.exports = {
   //update status
   updateStatus: async(req, res) => {
     try {
-
       var data = req.body;
 
       // get user
@@ -251,6 +251,7 @@ module.exports = {
   //update profile image
   userProfileImage: async(req, res) => {
     const files = req.files;
+    console.log(req.body);
     const checkUser = req.user
 
     try{

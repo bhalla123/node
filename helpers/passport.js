@@ -14,7 +14,7 @@ module.exports = passport => {
 		try {
 			const user = await User.findOne({
 				where : {
-					id : jwt_payload.sub
+					id : jwt_payload.id
 				}
 			});
 			if (!user) {

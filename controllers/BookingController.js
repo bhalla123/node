@@ -15,6 +15,9 @@ module.exports = {
   
   //pump list
   createBooking: async (req, res) => {
+    
+    const t = await db.sequelize.transaction();
+    
     try {
 
       const data = req.body;
@@ -36,7 +39,7 @@ module.exports = {
           booking_status:"requested"
         }
 
-        const bookingObj = await Booking.create(newObj);
+        const bookingObj = await Booking.create(newObj, { transaction: t });
 
         if (bookingObj) {
 
@@ -48,8 +51,8 @@ module.exports = {
             item['booking_id'] = bookingObj.id;
           });
 
-          await BookingSlot.bulkCreate(slotObj);
-
+          await BookingSlot.bulkCreate(slotObj, { transaction: t });
+          await t.commit();
           return responseHelper.post(res, bookingObj, 'Booking created')
         } else {
           return responseHelper.Error(res, {}, 'Error in creating booking')
@@ -58,6 +61,7 @@ module.exports = {
         return responseHelper.unauthorized(res);
       }
     } catch (err) {
+      await t.rollback();
       return responseHelper.onError(res, err, 'Error while creating booking');
     }
   },

@@ -15,8 +15,9 @@ const Booking = db.bookings;
 const Document = db.documents;
 
 signtoken = user => {
+  //console.log("mkmk", user);
   return JWT.sign({
-    sub: user.dataValues.sub,
+    id: user.dataValues.id,
     role_name: user.dataValues.type
   }, JWT_SECRET);
 }

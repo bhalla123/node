@@ -69,8 +69,15 @@ module.exports = {
 			status: joi.string().valid('block', 'deleted', 'active').required(),
 		}),
 
-		/*createBookingSchema: joi.object().keys({
-			fuel_pump_id: joi.number().required()
-		})*/
+		createBookingSchema: joi.object().keys({
+			fuel_pump_id: joi.number().required(),
+			booking_slot: joi.array().items({
+				from_time: joi.string().required(),
+				to_time: joi.string().required(),
+				fuel_in_liter: joi.string().required(),
+				vehicle_type: joi.string().empty(''),
+				booking_id:joi.string().empty(''),
+			}),
+		})
 	}
 }

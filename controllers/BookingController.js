@@ -18,6 +18,7 @@ module.exports = {
   //pump list
   createBooking: async (req, res) => {
     try {
+
       const data = req.body;
 
       var authToken = req.headers.authorization;
@@ -28,14 +29,33 @@ module.exports = {
       // get user
       const user = await User.findOne({
           where : {
-            id : decoded.sub
+            id : decoded.id
           }
       });
 
       if (user) {
-        const bookingObj = await FuelPump.create(data);
+
+        let newObj = {
+          fuel_pump_id: data.fuel_pump_id,
+          user_id: user.id,
+          booking_status:"requested"
+        }
+
+        const bookingObj = await Booking.create(newObj);
 
         if (bookingObj) {
+
+          var slotObj = data.booking_slot;
+          slotObj.map()
+
+          var obj={};
+          obj['booking_id']=3;
+          slotObj.push(obj);
+
+          console.log(slotObj);
+
+          await BookingSlot.bulkCreate(slotObj);
+
           return responseHelper.post(res, bookingObj, 'Booking created')
         } else {
           return responseHelper.Error(res, {}, 'Error in creating booking')

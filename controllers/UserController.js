@@ -18,7 +18,6 @@ signtoken = user => {
   return JWT.sign({
     id: user.dataValues.id,
     role_name: user.dataValues.type,
-    status: user.dataValues.status
   }, JWT_SECRET);
 }
 

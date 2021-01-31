@@ -48,11 +48,11 @@ router.route('/update/status')
 
 // logout
 router.route('/logout')
-	.post(passportJWT, middleware.isActive, userController.logout);
+	.post(passportJWT, userController.logout);
 
 // create booking
-/*router.route('/create/booking')
-.post(passportJWT, middleware.isActive, validateBody(schemas.createBookingSchema), bookingController.createBooking);
+router.route('/v1/create/booking')
+.post(passportJWT, validateBody(schemas.createBookingSchema), bookingController.createBooking);
 
 // Booking listing
 /*router.route('/vault-listing')

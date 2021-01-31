@@ -6,103 +6,56 @@ const db = require('../models')
 const helperFxn = require('../helpers/hashPasswords');
   
 const User = db.users;
-const Fuel = db.fuel;
-const FuelPump = db.fuel_pump;
+const Fuel = db.fuels;
+const FuelPump = db.fuel_pumps;
 
   
 module.exports = {
   
   //pump list
-  createPump: async (req, res) => {
+  createStation: async (req, res) => {
     try {
+
       const data = req.body;
-      const files = req.files
 
-      var authToken = req.headers.authorization;
-
-      //get login user
-      var decoded = JWT.verify(authToken.split(' ')[1], process.env.JWT_SECRET);
+      var userId = req.user.id;
       
       // get user
       const user = await User.findOne({
           where : {
-            id : decoded.sub
+            id : userId
           }
       });
 
       if (user) {
+        req.body.user_id = user.id;
 
-         
-        const createPump = await FuelPump.create(data);
+        const bookingObj = await FuelPump.create(req.body);
 
-        if (createPump) {
-          return responseHelper.post(res, createPump, 'Booking created')
+        if (bookingObj) {
+          return responseHelper.post(res, bookingObj, 'Fuel station created')
         } else {
-          return responseHelper.Error(res, {}, 'Error in creating booking')
+          return responseHelper.Error(res, {}, 'Error in creating fuel station')
         }
       } else {
         return responseHelper.unauthorized(res);
       }
     } catch (err) {
-      return responseHelper.onError(res, err, 'Error while creating booking');
+      return responseHelper.onError(res, err, 'Error while creating fuel station');
     }
   },
 
-  //get pump list
-  pumpListing: async (req, res) => {
-    try {
-      const checkUser = req.user
-      if (checkUser) {
-        // get pump listing
-        const getlisting = await FuelPump.findAll({
-          where : {
-           },
-          include : [
-            {
-              model: Fuel,
-            },
-          ],
-          order : [
-            [ 'id', 'DESC']
-          ]
-        });
-          return responseHelper.get(res, getlisting, 'Fuel Pump listing')
-      } else {
-        return responseHelper.unauthorized(res);
-      }
-    } catch (err) {
-      return responseHelper.onError(res, err, 'Error while listing');
-    }
-  },
-
-  //update pump image
-  PumpImage: async(req, res) => {
-    const files = req.files;
-    const checkUser = req.user
-
+  listing: async (req, res) => {
     try{
-      if(checkUser){
-        files.map( async c => {
-            await FuelPump.update({
-              image: c.filename,
-            }, {
-            where: {
-              id: checkUser.dataValues.id
-            }
-          });
-        });
+      const latitude =req.body.latitude;
+      const longitude =req.body.longitude;
 
-
-        const getPump = await FuelPump.findOne({
-          where: {
-            id: checkUser.dataValues.id
-          },
-        });
-
-        return responseHelper.get(res, getPump, 'Pump image updated')
-      }
-    }catch(err){
-      return responseHelper.onError(res, err, 'Error while updating pump image');
+      const result =  await db.sequelize.query("SELECT *, ( 6371 * acos ( cos ( radians("+ latitude +") ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians("+ longitude +") ) + sin ( radians("+ latitude +") ) * sin( radians( latitude ) ) ) ) AS distance FROM fuel_pumps HAVING distance < 30 ORDER BY distance LIMIT 0 , 20", { type: Sequelize.QueryTypes.SELECT})
+  
+      return responseHelper.post(res, result, 'Listing of nearest pump station') ;
     }
-  }
+    catch (err) {
+      return responseHelper.onError(res, err, 'Error while getting pump station listing');
+    }
+  },
 }

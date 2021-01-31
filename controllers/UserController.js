@@ -108,28 +108,6 @@ module.exports = {
       return responseHelper.onError(res, err, 'Error while logging In');
     }
   },
-
-
-  // LOGOUT
-  logout: async (req, res) => {
-    try {
-      const checkUser = req.user;
-      if (checkUser) {
-        await User.update({
-          deviceToken: '',
-        }, {
-          where: {
-            id: checkUser.dataValues.id
-          }
-        });
-        return responseHelper.post(res, {}, 'User successfully logged out');
-      } else {
-        return responseHelper.unauthorized(res);
-      }
-    } catch (err) {
-      return responseHelper.onError(res, err, 'Error while logging out of the app');
-    }
-  },
   
   //update status
   updateStatus: async(req, res) => {

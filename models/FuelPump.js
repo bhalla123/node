@@ -44,13 +44,13 @@ module.exports = function (sequelize, DataTypes) {
       field: 'zip'
     },
     latitude: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: true,
     defaultValue: null,
     validate: { min: -90, max: 90 }
 	  },
 	  longitude: {
-		type: DataTypes.INTEGER,
+		type: DataTypes.STRING,
 		allowNull: true,
 		defaultValue: null,
 		validate: { min: -180, max: 180 }

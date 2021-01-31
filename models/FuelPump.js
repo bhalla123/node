@@ -1,4 +1,3 @@
-const fileURL = require('../config/main');
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define('fuel_pumps', {
     id: {

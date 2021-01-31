@@ -1,30 +1,22 @@
 const JWT = require('jsonwebtoken');
 const Sequelize = require('sequelize');
-const ejs = require("ejs");
+require('dotenv').config();
 const Op = Sequelize.Op;
 const db = require('../models')
-const { JWT_SECRET } = require('../config/main');
-const commonFunction = require('../helpers/commonFunction');
 const responseHelper = require('../helpers/responseHelper');
 const helperFxn = require('../helpers/hashPasswords');
-const constant = require('../config/main');
-const BaseThumbNailUrl = require('../config/main').thumbnailUrl;
-
+ 
 const User = db.users;
 const Booking = db.bookings;
-const Document = db.documents;
-
+ 
 signtoken = user => {
   return JWT.sign({
     id: user.dataValues.id,
     role_name: user.dataValues.type,
-  }, JWT_SECRET);
+  }, process.env.JWT_SECRET);
 }
 
-//start associations //
-Booking.belongsTo(User, { foreignKey: 'user_id' })
-//end associations //
-
+  
 module.exports = {
 
   // user signup

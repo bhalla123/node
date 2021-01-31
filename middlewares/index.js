@@ -1,8 +1,6 @@
 const multer = require("multer");
 const dotenv = require('dotenv').config();
 const JWT = require('jsonwebtoken');
-const { JWT_SECRET } = require('../config/main');
-
 const middleware = {};
 
 middleware.apiKeyCheck = function(req, res, next) {
@@ -23,7 +21,7 @@ middleware.isAdmin = function(req, res, next) {
 	var authToken = req.headers.authorization;
 
     //get login user
-    var decoded = JWT.verify(authToken.split(' ')[1], JWT_SECRET);
+    var decoded = JWT.verify(authToken.split(' ')[1], process.encJWT_SECRET);
 
     if(decoded.role_name && decoded.role_name == "admin"){
     	return next();

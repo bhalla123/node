@@ -1,5 +1,5 @@
 /* jshint indent: 1 */
-const fileURL = require('../config/main');
+require('dotenv').config();
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define('users', {
     id: {
@@ -86,7 +86,7 @@ module.exports = function (sequelize, DataTypes) {
   {
     getterMethods: {
         image: function () {
-            return this.getDataValue('image')!='' ? fileURL.fileUrl+this.getDataValue('image') : ''
+            return this.getDataValue('image')!= null ? process.env.baseUrl+"/image/"+this.getDataValue('image') : ''
         }
     }, 
   },

@@ -1,5 +1,4 @@
 /* jshint indent: 1 */
-const imgUrl = require('../config/main');
 module.exports = function (sequelize, DataTypes) {
 	const Booking =  sequelize.define('bookings', {
 		id: {

@@ -1,5 +1,4 @@
-const boom = require('boom');
-
+ 
 const get = (res, resData, message) => {
     return res.json({
         success: true,
@@ -64,8 +63,6 @@ const unauthorized = (res, message) => {
 
 const onError = (res, err, message) => {
     console.log(err);
-    console.log(boom.badRequest(message));
-    console.log(getError(message));
     return res.status(400).json(getError(message));
 }
 

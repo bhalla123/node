@@ -15,7 +15,7 @@ const path = require('path');
 
 var middleware = require("./middlewares");
 
-const port = process.env.PORT || 3003
+const port = process.env.PORT || 3000
 const app = express(require('geolocation'));
 
 

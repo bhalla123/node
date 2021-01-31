@@ -1,7 +1,7 @@
 /* jshint indent: 1 */
 const imgUrl = require('../config/main');
 module.exports = function (sequelize, DataTypes) {
-	return sequelize.define('bookings', {
+	const Booking =  sequelize.define('bookings', {
 		id: {
 			type: DataTypes.INTEGER(11),
 			allowNull: false,
@@ -14,24 +14,25 @@ module.exports = function (sequelize, DataTypes) {
 			allowNull: false,
 			field: 'user_id'
 		},
-		petrol_pump_id: {
+	    fuel_pump_id: {
 			type: DataTypes.INTEGER(11),
 			allowNull: true,
-			field: 'petrol_pump_id'
+			field: 'fuel_pump_id'
 		},
-		filler_type: {
-			type: DataTypes.STRING(255),
-			allowNull: true,
-			field: 'filler_type'
-		},
-		status: {
+		booking_status: {
 			type:DataTypes.STRING(255),
-			allowNull:false,
-			defaultValue: 'Requested',
-			field:'status'
+			allowNull:true,
+ 			field:'booking_status'
 		}
 	},
 	{
-		tableName: 'bookings'
-	});
+            underscored: true,
+            freezeTableName: true,
+    });
+	Booking.associate = models => {
+        Booking.hasMany(models.booking_slots);
+		Booking.belongsTo(models.users);
+        Booking.belongsTo(models.fuel_pump);
+      };
+    return Booking;
 };

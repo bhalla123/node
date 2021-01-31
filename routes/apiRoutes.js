@@ -42,7 +42,7 @@ router.route('/update/profile/image')
 
 //update status
 router.route('/update/status')
-.post(passportJWT, middleware.isAdmin, validateBody(schemas.updateStatusSchema), ApiController.updateStatus);
+.post(vaultUploads.array('images',1), passportJWT, middleware.isAdmin, validateBody(schemas.updateStatusSchema), ApiController.updateStatus);
 
 
 // logout

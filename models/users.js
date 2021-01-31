@@ -46,20 +46,20 @@ module.exports = function (sequelize, DataTypes) {
     },
     status: {
       type: DataTypes.STRING(100),
-      defaultValue: "Active",
+      defaultValue: "active",
       field: 'status'
     },
     type: {
       type: DataTypes.STRING(100),
-      defaultValue: "NormalUser",
-      field: 'status'
+      defaultValue: "normalUser",
+      field: 'type'
     },
 
   }, 
   {
     getterMethods: {
         image: function () {
-            return this.getDataValue('image')!='' ? fileURL.fileUrl+this.getDataValue('image') : ''
+            return this.getDataValue('image')!= null ? fileURL.fileUrl+this.getDataValue('image') : ''
         }
     }, 
   },

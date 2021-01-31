@@ -222,21 +222,31 @@ module.exports = {
   updateStatus: async(req, res) => {
     try {
 
+      var data = req.body;
+
       // get user
       const user = await User.findOne({
           where : {
-            id : req.user_id
+            id : data.user_id
           }
       });
 
       if (user){
         await User.update({
-              status: req.status,
+              status: data.status,
             }, {
             where: {
-              id: req.user_id
+              id: data.user_id
             }
           });
+
+        const getUser = await User.findOne({
+          where: {
+            id: user.dataValues.id
+          },
+        })
+
+        return responseHelper.get(res, getUser, 'Status updated successfully')
       }else{
         return responseHelper.Error(res, {}, 'User does not exist')
       }

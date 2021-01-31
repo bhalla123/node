@@ -8,23 +8,21 @@ const commonFunction = require('../helpers/commonFunction');
 const responseHelper = require('../helpers/responseHelper');
 const helperFxn = require('../helpers/hashPasswords');
 const constant = require('../config/main');
-const BaseThumbNailUrl = require('../config/main').thumbnailUrl
+const BaseThumbNailUrl = require('../config/main').thumbnailUrl;
 
 const User = db.users;
-const Role = db.roles;
 const Booking = db.bookings;
 const Document = db.documents;
 
 signtoken = user => {
   return JWT.sign({
-    sub: user.dataValues.id,
+    sub: user.dataValues.sub,
+    role_name: user.dataValues.type
   }, JWT_SECRET);
 }
 
 //start associations //
 Booking.belongsTo(User, { foreignKey: 'user_id' })
-Booking.hasMany(Document, { foreignKey: 'type_id' })
-Role.hasMany(Role, { foreignKey: 'user_id' })
 //end associations //
 
 module.exports = {
@@ -32,29 +30,38 @@ module.exports = {
   // user signup
   signup: async (req, res) => {
     try {
+      var filename = [];
       const data = req.body;
+      const files = req.files;
 
-      //const files = req.file;
       // check Email 
       const checkEmail = await User.findOne({
         attributes: ['id', 'email'],
         where: {
           email: data.email
         }
-      })
+      });
+
       if (checkEmail) {
         return responseHelper.Error(res, {}, 'Email is already used, Please select another')
       }
+
+      await files.map( async c => {
+          filename.push(c.filename);
+      });
      
       let newPassword = await helperFxn.generatePass(data.password);
 
       let newObj = {
-        first_name: data.first_name || '',
-        last_name: data.last_name || '',
+        first_name: data.first_name ,
+        last_name: data.last_name ,
         email: data.email,
         password: newPassword,
-        phone_number: data.phone_number || '',
+        phone_number: data.phone_number,
+        type:data.type,
+        image:filename[0]
       }
+
       const createUser = await User.create(newObj);
       if (createUser) {
         const getUser = await User.findOne({
@@ -62,17 +69,6 @@ module.exports = {
             id: createUser.dataValues.id
           },
         })
-
-        //Create user role
-        {
-          let roleObj = {
-            user_id: getUser.id,
-            name: data.role_name,
-          }
-
-          const createRole = await Role.create(roleObj);
-        }
-
         const access_token = signtoken(getUser)
         delete getUser.dataValues.password;
         getUser.dataValues.access_token = access_token;
@@ -95,7 +91,10 @@ module.exports = {
         attributes: ['id', 'email', 'password'],
         where: {
           email: data.email
-        }
+        },
+        include:[
+
+        ]
       });
 
       console.log(user);
@@ -165,7 +164,6 @@ module.exports = {
           }
       });
 
-      //return;
       if (user) {
 
         let bookingObj = {
@@ -216,6 +214,34 @@ module.exports = {
       }
     } catch (err) {
       return responseHelper.onError(res, err, 'Error while listing vaults');
+    }
+  },
+
+  //update status
+  updateStatus: async(req, res) => {
+    try {
+
+      // get user
+      const user = await User.findOne({
+          where : {
+            id : req.user_id
+          }
+      });
+
+      if (user){
+        await User.update({
+              status: req.status,
+            }, {
+            where: {
+              id: req.user_id
+            }
+          });
+      }else{
+        return responseHelper.Error(res, {}, 'User does not exist')
+      }
+
+    }catch(err){
+      return responseHelper.onError(res, err, 'Error while updating user status');
     }
   },
 

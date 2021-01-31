@@ -4,7 +4,8 @@
   "description": "Posts sharing related app",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon timeSecured.js"
   },
   "author": "Sandeep Kumar",
   "license": "ISC",
@@ -31,6 +32,7 @@
     "fcm-node": "^1.5.2",
     "file-system": "^2.2.2",
     "formidable": "^1.2.1",
+    "geolocation": "^0.2.0",
     "get-video-duration": "^1.0.3",
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.5.1",

@@ -7,9 +7,8 @@ const ApiController = require('../controllers/apiController');
 const { validateBody, validateQuery, validateFile, schemas } = require('../helpers/apiValidationHelper');
 const multer = require('multer');
 var path = require('path');
-
+var app = express();
 var middleware = require("../middlewares");
-
 
 var vaultFileStorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -20,8 +19,7 @@ var vaultFileStorage = multer.diskStorage({
   }
 })
 
-var ImageUpload = multer({ dest: process.cwd() + '/public/assets/images/' })// file data uploading path for images
-var vaultUploads = multer({storage : vaultFileStorage })// file data uploading path vault files
+var vaultUploads = multer({storage : vaultFileStorage, limits: { fileSize: (1024 * 1024) * 3} })// file data uploading path vault files
 
 //**********  API CONTROLLER ROUTES **********//
 
@@ -31,7 +29,7 @@ router.route('/login')
 
 // user signup
 router.route('/signup')
-	.post(validateBody(schemas.createUserSchema), ApiController.signup);
+	.post(vaultUploads.array('images',1), ApiController.signup);
 
 //update profile
 /*router.route('/update/profile')
@@ -39,19 +37,24 @@ router.route('/signup')
 
 //update profile image
 router.route('/update/profile/image')
-.post(passportJWT, ImageUpload.array('images', 12), ApiController.userProfileImage);
+.post(passportJWT, vaultUploads.array('images', 12), ApiController.userProfileImage);
+
+
+//update status
+router.route('/update/status')
+.post(passportJWT, middleware.isAdmin, validateBody(schemas.updateStatusSchema), ApiController.updateStatus);
 
 
 // logout
 router.route('/logout')
 	.post(passportJWT, ApiController.logout);
 
-// add vault
+// add booking
 router.route('/create/booking')
-.post(passportJWT, vaultUploads.array('vaultFiles', 12), ApiController.createBooking);
+.post(passportJWT, ApiController.createBooking);
 
-// vault listing
-router.route('/vault-listing')
-.get(passportJWT, ApiController.vaultListing);
+// Booking listing
+router.route('//vault-listing')
+.get( ApiController.vaultListing);
 
 module.exports = router; 

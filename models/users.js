@@ -1,5 +1,5 @@
 /* jshint indent: 1 */
-const imgUrl = require('../config/main');
+const fileURL = require('../config/main');
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define('users', {
     id: {
@@ -29,11 +29,11 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true,
       field: 'password'
     },
-    /*image: {
+    image: {
       type: DataTypes.STRING(250),
       allowNull: true,
       field: 'image'
-    },*/
+    },
     phone_number: {
       type: DataTypes.STRING(100),
       allowNull: true,
@@ -44,14 +44,25 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true,
       field: 'gender'
     },
+    status: {
+      type: DataTypes.STRING(100),
+      defaultValue: "Active",
+      field: 'status'
+    },
+    type: {
+      type: DataTypes.STRING(100),
+      defaultValue: "NormalUser",
+      field: 'status'
+    },
+
   }, 
-  /*{
+  {
     getterMethods: {
         image: function () {
-            return this.getDataValue('image')!='' ? imgUrl.imageUrl+this.getDataValue('image') : ''
+            return this.getDataValue('image')!='' ? fileURL.fileUrl+this.getDataValue('image') : ''
         }
     }, 
-  },*/
+  },
     {
     tableName: 'users'
   });

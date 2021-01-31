@@ -13,9 +13,16 @@ const dotenv = require('dotenv');
 require('express-group-routes');
 const path = require('path');
 
+var middleware = require("./middlewares");
 
 const port = process.env.PORT || 3003
-const app = express();
+const app = express(require('geolocation'));
+
+
+// Express body parser
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
 
 // Passport middleware
 app.use(passport.initialize());
@@ -36,12 +43,7 @@ db.sequelize.sync({ force: false })
 app.set('views', path.join(__dirname,'views'));
 app.set('view engine', 'ejs');
 
-// Express body parser
-app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.json({type: 'application/*'}));
 //app.use(bodyParser.json({ type: 'application/*+json' }));
-
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // Express session (milliseconds)
 app.use(session({ secret: 'timeSecuredSecret', cookie: { maxAge: 3600000 }, resave: true, saveUninitialized: true}) );
@@ -52,17 +54,17 @@ app.use(cookiesParser());
 app.use(flash());
 
 // Global variables
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
   next();
 });
-
+*/
 
 app.use(express.static(__dirname + '/public'));  
 
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', "*");
 	res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials');
@@ -73,20 +75,22 @@ app.use((req, res, next) => {
 var login = require('./controllers/login');
 var signup = require('./controllers/signup');
 
-
-
-
 //routes
 app.use('/login', login);
-app.use('/signup', signup);
+app.use('/signup', signup);*/
 
+
+/*app.group((router) => {
+  router.use(middleware.apiKeyCheck);
+});
+*/
 
 /* Start Api Routes */
 app.use('/api', require('./routes/apiRoutes'));
 
+//app.use(fileupload())
 /* ends */
 
-app.use(fileupload());
 router(app);
 
 

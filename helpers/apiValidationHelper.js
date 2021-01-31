@@ -68,23 +68,16 @@ module.exports = {
 		createUserSchema: joi.object().keys({
 			first_name: joi.string().empty(''),
 			last_name: joi.string().empty(''),
-			email: joi.string().required(),
+			email: joi.string().email().required(),
 			password: joi.string().required(),
 			phone_number: joi.string().empty(''),
 			role_name: joi.string().empty(''),
+			type: joi.string().valid('Admin', 'NormalUser', 'Employee').required(),
 		}),
 
-		forgotPasswordSchema: joi.object().keys({
-			email: joi.string().required(),
-		}),
-
-		socialLoginSchema: joi.object().keys({
-			userName: joi.string().required(),
-			email: joi.string().required(),
-			socialType: joi.number().required(),
-			socialId: joi.string().required(),
-			deviceType: joi.number().empty(''),
-			deviceToken: joi.string().empty(''),
+		updateStatusSchema: joi.object().keys({
+			user_id: joi.string().required(),
+			status: joi.string().valid('Block', 'Deleted', 'Active').required(),
 		}),
 
 		addVaultSchema: joi.object().keys({

@@ -86,7 +86,7 @@ module.exports = function (sequelize, DataTypes) {
   {
     getterMethods: {
         image: function () {
-            return this.getDataValue('image')!= null ? process.env.baseUrl+"/image/"+this.getDataValue('image') : ''
+            return this.getDataValue('image')!= null ? process.env.baseUrl+"/images/"+this.getDataValue('image') : ''
         }
     }, 
   },

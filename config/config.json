@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "root",
-    "password": "",
-    "database": "node",
+    "password": "root",
+    "database": "petrol_pump",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }

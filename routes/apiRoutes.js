@@ -14,7 +14,7 @@ var middleware = require("../middlewares");
 
 var vaultFileStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, `${process.cwd() + '/public/uploads/vaults/' }`)
+    cb(null, `${process.cwd() + '/public/images/' }`)
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname)) //Appending extension
@@ -35,7 +35,7 @@ router.route('/signup')
 
 //update profile image
 router.route('/update/profile')
-.post(passportJWT, vaultUploads.array('images', 1), middleware.isActive, userController.userProfileImage);
+.post(passportJWT, vaultUploads.array('images', 1), userController.userProfileImage);
 
 
 //update profile
@@ -44,7 +44,7 @@ router.route('/update/profile')
 
 //update status for admin only
 router.route('/update/status')
-.post(passportJWT, middleware.isAdmin, validateBody(schemas.updateStatusSchema), userController.updateStatus);
+.post(passportJWT,  validateBody(schemas.updateStatusSchema), userController.updateStatus);
 
 // logout
 router.route('/logout')
@@ -60,6 +60,6 @@ router.route('/v1/booking/list')
 
 //update fuel 
 router.route('/v1/update/station/image')
-.get(passportJWT, bookingController.updateFuelStation);
+.post(passportJWT,vaultUploads.array('images', 1), bookingController.updateFuelStation);
 
 module.exports = router; 

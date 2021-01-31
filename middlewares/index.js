@@ -21,7 +21,7 @@ middleware.isAdmin = function(req, res, next) {
 	var authToken = req.headers.authorization;
 
     //get login user
-    var decoded = JWT.verify(authToken.split(' ')[1], process.encJWT_SECRET);
+   // var decoded = JWT.verify(authToken.split(' ')[1], p);
 
     if(decoded.role_name && decoded.role_name == "admin"){
     	return next();

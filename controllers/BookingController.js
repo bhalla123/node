@@ -120,24 +120,44 @@ module.exports = {
     try{
       
       if(checkUser){
-        files.map( async c => {
-            await FuelPump.update({
-              image: c.filename,
-            }, {
-            where: {
-              id: checkUser.dataValues.id
-            }
+        if(files.length > 0){
+          files.map( async c => {
+              await FuelPump.update({
+                image: c.filename,
+              }, {
+              where: {
+                user_id: checkUser.dataValues.id
+              }
+            })
+            .then(async ress=>{
+            const getPump = await FuelPump.findOne({
+              where: {
+                user_id: checkUser.dataValues.id
+              },
+            });
+            Promise.resolve(responseHelper.get(res, getPump, 'Pump image updated'));
+
           });
         });
 
-        const getPump = await FuelPump.findOne({
-            where: {
-              id: checkUser.dataValues.id
-            },
-          })
-        return responseHelper.get(res, getPump, 'Pump image updated')
+      }else{
+          await FuelPump.update({
+                image: null,
+              }, {
+              where: {
+                user_id: checkUser.dataValues.id
+              }
+            }).then(async ress=>{
+              const getPump =  await FuelPump.findOne({
+                where: {
+                  user_id: checkUser.dataValues.id
+                },
+              });
+            Promise.reject(responseHelper.get(res, getPump, 'Pump image updated'));
+        });
       }
-    }catch(err){
+    }else{
+    }}catch(err){
       return responseHelper.onError(res, err, 'Error while updating pump image');
     }
   }

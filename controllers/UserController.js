@@ -171,30 +171,50 @@ module.exports = {
   //update profile image
   userProfileImage: async(req, res) => {
     const files = req.files;
-
     const checkUser = req.user
 
     try{
+      
       if(checkUser){
-        files.map( async c => {
-            await User.update({
-              image: c.filename,
-            }, {
-            where: {
-              id: checkUser.dataValues.id
-            }
-          });
-        });
-
-        const getUser = await User.findOne({
+        if(files.length > 0){
+          files.map( async c => {
+              await User.update({
+                image: c.filename,
+              }, {
+              where: {
+                id: checkUser.dataValues.id
+              }
+            })
+            .then(async ress=>{
+            const getUser = await User.findOne({
               where: {
                 id: checkUser.dataValues.id
               },
-            })
-        return responseHelper.get(res, getUser, 'User profile updated')
+            });
+            Promise.resolve(responseHelper.get(res, getUser, 'user image updated'));
+
+          });
+        });
+
+      }else{
+          await User.update({
+                image: null,
+              }, {
+              where: {
+                id: checkUser.dataValues.id
+              }
+            }).then(async ress=>{
+              const getUser =  await User.findOne({
+                where: {
+                  id: checkUser.dataValues.id
+                },
+              });
+            Promise.reject(responseHelper.get(res, getUser, 'user image updated'));
+        });
       }
-    }catch(err){
-      return responseHelper.onError(res, err, 'Error while updating profile image');
+    }else{
+    }}catch(err){
+      return responseHelper.onError(res, err, 'Error while updating pump image');
     }
   }
 }

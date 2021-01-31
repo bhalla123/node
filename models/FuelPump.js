@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define('fuel_pumps', {
     id: {
@@ -68,7 +70,7 @@ module.exports = function (sequelize, DataTypes) {
   {
     getterMethods: {
         image: function () {
-            return this.getDataValue('image')!='' ? fileURL.fileUrl+this.getDataValue('image') : ''
+            return this.getDataValue('image')!= null ? process.env.baseUrl+"/images/"+this.getDataValue('image') : ''
         }
     }, 
   },

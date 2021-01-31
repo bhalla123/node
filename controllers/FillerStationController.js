@@ -92,11 +92,13 @@ module.exports = {
           });
         });
 
+
         const getPump = await FuelPump.findOne({
-              where: {
-                id: checkUser.dataValues.id
-              },
-            })
+          where: {
+            id: checkUser.dataValues.id
+          },
+        });
+
         return responseHelper.get(res, getPump, 'Pump image updated')
       }
     }catch(err){

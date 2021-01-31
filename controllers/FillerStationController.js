@@ -14,14 +14,6 @@ const Fuel = db.fuel;
 const FuelPump = db.fuel_pump;
 
   
-signtoken = user => {
-   return JWT.sign({
-    id: user.dataValues.id,
-    role_name: user.dataValues.type
-  }, JWT_SECRET);
-}
-
-  
 module.exports = {
   
   //pump list
@@ -84,34 +76,6 @@ module.exports = {
       }
     } catch (err) {
       return responseHelper.onError(res, err, 'Error while listing');
-    }
-  },
-
-  //update status
-  updateStatus: async(req, res) => {
-    try {
-
-      // get user
-      const user = await User.findOne({
-          where : {
-            id : req.user_id
-          }
-      });
-
-      if (user){
-        await User.update({
-              status: req.status,
-            }, {
-            where: {
-              id: req.user_id
-            }
-          });
-      }else{
-        return responseHelper.Error(res, {}, 'Pump does not exist')
-      }
-
-    }catch(err){
-      return responseHelper.onError(res, err, 'Error while updating user status');
     }
   },
 

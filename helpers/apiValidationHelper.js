@@ -49,20 +49,9 @@ module.exports = {
 	},
 
 	schemas: {
-
 		signInSchema: joi.object().keys({
 			password: joi.string().required(),
 			email: joi.string().required(),
-		}),
-
-		updateProfileSchema: joi.object().keys({
-			email: joi.string().required(),
-			firstName: joi.string().empty(''),
-			lastName: joi.string().empty(''),
-			gender: joi.string().empty(''),
-			about: joi.string().empty(''),
-			phone: joi.string().empty(''),
-			dob: joi.string().empty(''),
 		}),
 
 		createUserSchema: joi.object().keys({
@@ -80,21 +69,8 @@ module.exports = {
 			status: joi.string().valid('block', 'deleted', 'active').required(),
 		}),
 
-		addVaultSchema: joi.object().keys({
-			name: joi.string().required(),
-			phoneNumber: joi.string().required(),
-			beneficiaries: joi.string().required(),
-			triggerType: joi.number().required(),
-			triggerDate: joi.string().required(),
-			triggerTime: joi.string().required(),
-			alertDuration: joi.number().required(),
-			notes: joi.string().empty(''),
-		}),
-
-		userIdSchema: joi.object().keys({
-			userId: joi.number().required(),
-		}),
-
-
+		/*createBookingSchema: joi.object().keys({
+			fuel_pump_id: joi.number().required()
+		})*/
 	}
 }

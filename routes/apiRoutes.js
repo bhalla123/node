@@ -3,7 +3,9 @@ const router = express.Router();
 passport = require('passport');
 require('../helpers/passport')(passport);
 const passportJWT = passport.authenticate('jwt', { session: false });
-const ApiController = require('../controllers/apiController');
+const userController = require('../controllers/UserController');
+const bookingController = require('../controllers/BookingController');
+const FillerStationController = require('../controllers/FillerStationController');
 const { validateBody, validateQuery, validateFile, schemas } = require('../helpers/apiValidationHelper');
 const multer = require('multer');
 var path = require('path');
@@ -25,30 +27,35 @@ var vaultUploads = multer({storage : vaultFileStorage, limits: { fileSize: (1024
 
 //signIn
 router.route('/login')
-	.post(validateBody(schemas.signInSchema), ApiController.login);
+	.post(validateBody(schemas.signInSchema), userController.login);
 
 //user signup
 router.route('/signup')
-	.post(validateBody(schemas.createUserSchema), ApiController.signup);
+	.post(validateBody(schemas.createUserSchema), userController.signup);
 
 //update profile image
-router.route('/upload/file')
-.post(vaultUploads.array('attachment', 1), middleware.isActive, ApiController.userProfileImage);
+router.route('/update/profile')
+.post(passportJWT, vaultUploads.array('images', 1), middleware.isActive, userController.userProfileImage);
 
-//update status
+
+//update profile
+router.route('/update/profile')
+	.post(passportJWT, vaultUploads.array('images', 1), userController.userProfileImage);
+
+//update status for admin only
 router.route('/update/status')
-.post(passportJWT, middleware.isAdmin, validateBody(schemas.updateStatusSchema), ApiController.updateStatus);
+.post(passportJWT, middleware.isAdmin, validateBody(schemas.updateStatusSchema), userController.updateStatus);
 
 // logout
 router.route('/logout')
-	.post(passportJWT, middleware.isActive, ApiController.logout);
+	.post(passportJWT, middleware.isActive, userController.logout);
 
-// add booking
-router.route('/create/booking')
-.post(passportJWT, middleware.isActive, ApiController.createBooking);
+// create booking
+/*router.route('/create/booking')
+.post(passportJWT, middleware.isActive, validateBody(schemas.createBookingSchema), bookingController.createBooking);
 
 // Booking listing
-router.route('/vault-listing')
-.get(middleware.isActive, ApiController.vaultListing);
+/*router.route('/vault-listing')
+.get(middleware.isActive, BookingController.vaultListing);*/
 
 module.exports = router; 

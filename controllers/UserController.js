@@ -140,77 +140,6 @@ module.exports = {
     }
   },
   
-  //booking
-  createBooking: async (req, res) => {
-    try {
-      const data = req.body;
-      const files = req.files
-
-      var authToken = req.headers.authorization;
-
-      //get login user
-      var decoded = JWT.verify(authToken.split(' ')[1], JWT_SECRET);
-      
-      // get user
-      const user = await User.findOne({
-          where : {
-            id : decoded.sub
-          }
-      });
-
-      if (user) {
-
-        let bookingObj = {
-          user_id: user.id,
-          petrol_pump_id: data.station_id,
-          filler_type: data.filler_type,
-        }
-        const createBooking = await Booking.create(bookingObj);
-
-        if (createBooking) {
-          return responseHelper.post(res, createBooking, 'Booking created')
-        } else {
-          return responseHelper.Error(res, {}, 'Error in creating booking')
-        }
-      } else {
-        return responseHelper.unauthorized(res);
-      }
-    } catch (err) {
-      return responseHelper.onError(res, err, 'Error while creating booking');
-    }
-  },
-
-  //get booking list
-  vaultListing: async (req, res) => {
-    try {
-      const checkUser = req.user
-      if (checkUser) {
-        // get vault listing
-        const getVault = await Vault.findAll({
-          where : {
-            userId : checkUser.dataValues.id
-          },
-          include : [
-            {
-              model: User, attributes: ['id', 'userName', 'email'],
-            },
-            {
-              model: VaultFile, attributes: ['id', 'vaultId', 'file'],
-            },
-          ],
-          order : [
-            [ 'id', 'DESC']
-          ]
-        });
-          return responseHelper.get(res, getVault, 'Vault listing')
-      } else {
-        return responseHelper.unauthorized(res);
-      }
-    } catch (err) {
-      return responseHelper.onError(res, err, 'Error while listing vaults');
-    }
-  },
-
   //update status
   updateStatus: async(req, res) => {
     try {
@@ -251,7 +180,7 @@ module.exports = {
   //update profile image
   userProfileImage: async(req, res) => {
     const files = req.files;
-    console.log(req.body);
+
     const checkUser = req.user
 
     try{

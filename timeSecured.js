@@ -1,13 +1,9 @@
 const express = require('express');
-const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
 const router = require('router');
-const flash = require('connect-flash');
-const session = require('express-session');
-const cookiesParser = require('cookie-parser');
-var fileupload = require("express-fileupload");
 const passport = require('passport');
 const sequelize = require('sequelize');
+var cors = require('cors')
 const db = require('./models');
 const dotenv = require('dotenv');
 require('express-group-routes');
@@ -16,10 +12,11 @@ const path = require('path');
 var middleware = require("./middlewares");
 
 const port = process.env.PORT || 3000
-const app = express(require('geolocation'));
+const app = express();
 
+app.use(cors())
 
-// Express body parser
+// body parser
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
@@ -41,11 +38,8 @@ db.sequelize.sync({ force: false })
 
 // EJS
 app.set('views', path.join(__dirname,'views'));
-app.set('view engine', 'ejs');
 
-//app.use(bodyParser.json({ type: 'application/*+json' }));
-//app.use(express.static(__dirname + '/public'));  
-
+  
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', "*");
 	res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
@@ -62,8 +56,7 @@ app.use((req, res, next) => {
 /* Start Api Routes */
 app.use('/api', require('./routes/apiRoutes'));
 
-//app.use(fileupload())
-/* ends */
+ /* ends */
 
 router(app);
 

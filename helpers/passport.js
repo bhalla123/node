@@ -1,7 +1,9 @@
 const passport = require('passport');
+var f= require('dotenv').config();
+console.log(f)
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const JWT_SECRET = require('../config/main.js').JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET;
 const db = require('../models');
 const User = db.users;
 const opts = {};

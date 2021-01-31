@@ -1,14 +1,10 @@
 const JWT = require('jsonwebtoken');
 const Sequelize = require('sequelize');
-const ejs = require("ejs");
 const Op = Sequelize.Op;
 const db = require('../models')
-const { JWT_SECRET } = require('../config/main');
-const commonFunction = require('../helpers/commonFunction');
 const responseHelper = require('../helpers/responseHelper');
 const helperFxn = require('../helpers/hashPasswords');
-const constant = require('../config/main');
- 
+  
 const User = db.users;
 const Booking = db.bookings;
 const BookingSlot = db.booking_slots;
@@ -24,7 +20,7 @@ module.exports = {
       var authToken = req.headers.authorization;
 
       //get login user
-      var decoded = JWT.verify(authToken.split(' ')[1], JWT_SECRET);
+      var decoded = JWT.verify(authToken.split(' ')[1], proccess.env.JWT_SECRET);
       
       // get user
       const user = await User.findOne({

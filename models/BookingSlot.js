@@ -1,4 +1,3 @@
-const imgUrl = require('../config/main');
 module.exports = function (sequelize, DataTypes) {
 	const BookingSlot = sequelize.define('booking_slots', {
 		id: {

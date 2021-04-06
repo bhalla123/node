@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon timeSecured.js"
   },
-  "author": "Sandeep Kumar",
+  "author": "abcu",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^3.0.6",
